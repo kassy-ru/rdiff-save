@@ -1,0 +1,20 @@
+instance=example.com
+vgs=vg:freeze:10G
+sources=([0]=/ [1]=/boot [2]=/usr [3]=/var [4]=/home)
+# Format of excludes: <path1>[:path2[:path3[…]]] String expands to --exclude path1 --exclude path2 --exclude path3 …
+excludes=()
+targets=([0]=root)
+target=/mnt/backup
+snapshot=/mnt/snapshot
+maxAge=1M
+remote=netbackup@backup.serv.er:example.com/
+email=root@example.com
+
+# Don't touch code below this line
+declare -A mountPoints
+tIFS="$IFS"
+IFS="$(echo -en "\n\r")"
+for mp in $(egrep '^/[^/]' /proc/mounts | awk '{print $2}'); do
+	mountPoints[${#mountPoints[*]}]="$mp"
+done
+IFS="$tIFS"
