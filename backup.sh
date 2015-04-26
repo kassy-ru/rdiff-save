@@ -52,7 +52,9 @@
 				snPath=/dev/$vgName/$snName
 				snSize=${cfg[1]}
 				
-				lvcreate -L$snSize -sn $snName $lvPath
+				echo $snSize | grep -qs '%' && snSize="-l$snSize" || snSize="-L$snSize"
+				
+				lvcreate $snSize -sn $snName $lvPath
 				if [[ $? -eq 0 ]]; then
 					mount $snPath $snapshot
 					if [[ $? -eq 0 ]]; then
