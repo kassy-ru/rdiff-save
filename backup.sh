@@ -47,12 +47,16 @@
 			vgName=${cfg[1]}
 			cfg=($(echo $vgs | egrep -o "(^| )$vgName:[^: ]+:[^: ]+( |$)" | sed -r "s/^(|.* )($vgName):([^ :]+):([^ :]+)( .*|)$/\3 \4/"))
 			
-			if [[ ${#cfg[*]} -eq 2 ]]; then # volume group configured
+			if [[ ${#cfg[*]} -ge 1 ]]; then # volume group configured
 				snName=${cfg[0]}
 				snPath=/dev/$vgName/$snName
 				snSize=${cfg[1]}
 				
-				echo $snSize | grep -qs '%' && snSize="-l$snSize" || snSize="-L$snSize"
+				if [ -z "$snSize" ]; then
+					snSize=-l100%FREE
+				else
+					echo $snSize | grep -qs '%' && snSize="-l$snSize" || snSize="-L$snSize"
+				fi
 				
 				lvcreate $snSize -sn $snName $lvPath
 				if [[ $? -eq 0 ]]; then
