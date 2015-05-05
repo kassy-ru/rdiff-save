@@ -105,13 +105,17 @@
 	for i in ${!backedUp[*]}; do
 		path=${backedUp[$i]}
 		
+		echo " = Cleaning $path"
 		rdiff-backup --force --remove-older-than $maxAge $path
 		
+		echo " = Verifying $path"
 		echo -e "\n\t=== $path\n" >> "$mail"
 		rdiff-backup --verify $path 2>&1 >> "$mail" || error=yes
 	done
 	[ -n "$error" ] && mail -s "[$instance] Backup repo verification error" "$email" < "$mail"
 	
 	rm -f "$mail"
+	
+	echo " = Backup completed"
 
 } 2>&1 | ts '[%Y-%m-%d %H:%M:%S]' >> /var/log/backup
