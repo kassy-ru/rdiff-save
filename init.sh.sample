@@ -18,3 +18,5 @@ for mp in $(egrep '^/[^/]' /proc/mounts | awk '{print $2}'); do
 	mountPoints[${#mountPoints[*]}]="$mp"
 done
 IFS="$tIFS"
+
+# vim: syntax=sh
